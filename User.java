@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//    private ArrayList<String> email;
-//    private List<String> tel;
 //    private HashMap<char,String> userType;
 
 public class User {
@@ -20,8 +18,8 @@ public class User {
     private String password;
     private String userName;
     private String position;
-    private String email;
-    private String tel;
+    private ArrayList<String> email = new ArrayList<String>();
+    private ArrayList<String> tel = new ArrayList<String>();
     private String userTypeId;
 
     public String getUserId() {
@@ -33,10 +31,10 @@ public class User {
     public String getPosition() {
         return position;
     }
-    public String getEmail() {
+    public ArrayList<String> getEmail() {
         return email;
     }
-    public String getTel() {
+    public ArrayList<String> getTel() {
         return tel;
     }
     public String getPassword() {
@@ -54,10 +52,10 @@ public class User {
     public void setPosition(String position) {
         this.position = position;
     }
-    public void setEmail(String email) {
+    public void setEmail(ArrayList<String> email) {
         this.email = email;
     }
-    public void setTel(String tel) {
+    public void setTel(ArrayList<String> tel) {
         this.tel = tel;
     }
     public void setPassword(String password) {
@@ -72,34 +70,36 @@ public class User {
         u.setUserId(rs.getString("user_name"));
         u.setUserName(rs.getString("user_password"));
         u.setPosition(rs.getString("user_id"));
-        u.setEmail(rs.getString("email"));
-        u.setTel(rs.getString("tel"));
+        u.setEmail((ArrayList<String>) rs.getString("email"));
+        u.setTel((ArrayList<String>) rs.getString("tel"));
     }
 
     public User() {
 
     }
+    public User(String userId, String password, String userName, String position, ArrayList<String> email, ArrayList<String> tel, String userTypeId) {
+        this.userId = userId;
+        this.password = password;
+        this.userName = userName;
+        this.position = position;
+        this.email = email;
+        this.tel = tel;
+        this.userTypeId = userTypeId;
+    }
 
-//    public void showData(){
-//        try{
-//            String sql = "select * from User";
-//            Connection con = ConnectionBuilder.ConnectionBuilder();
-//            PreparedStatement statement = con.prepareStatement(sql);//เป็นการเตรียมคำสั่งsqlสำหรับเรียกดูข้อมูลในตาราง
-//            statement.setString(1, userId);
-////            statement.setString(2, userName);
-////            statement.setString(3, position);
-////            statement.setString(4, email);
-//            
-//            statement.execute();//ประมวลผลข้อมูล
-//            statement.close();//หยุดการประมวลผล
-//            con.close();
-//        }catch(Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//    }
     public void insertUser() throws ClassNotFoundException {
         System.out.println("insert " + userId + " finish!");
         try {
+            String strMail = "";
+            for(int i=0;i<email.size();i++){
+                strMail += email.get(i);
+                strMail += ",";
+            }
+            String strTel = "";
+            for(int i=0;i<tel.size();i++){
+                strTel += tel.get(i);
+                strTel += ",";
+            }
             String sql = "INSERT into User (user_id,user_password,user_name,user_position,user_email,user_tel,user_type) values (?,?,?,?,?,?,?)";
             Connection con = ConnectionBuilder.ConnectionBuilder();
             PreparedStatement statement = con.prepareStatement(sql);
@@ -107,9 +107,11 @@ public class User {
             statement.setString(2, password);
             statement.setString(3, userName);
             statement.setString(4, position);
-            statement.setString(5, email);
-            statement.setString(6, tel);
+            statement.setString(5, strMail);
+            statement.setString(6, strTel);
             statement.setString(7, userTypeId);
+            statement.execute();//ประมวลผลข้อมูล
+            statement.close();//หยุดการประมวลผล
             con.close();
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());//ใช้แสดงความผิดปกติเป็นString
@@ -119,6 +121,16 @@ public class User {
     public void updateUser() {
         System.out.println("userId " + userId + "update finish!");
         try {
+            String strMail = "";
+            for(int i=0;i<email.size();i++){
+                strMail += email.get(i);
+                strMail += ",";
+            }
+            String strTel = "";
+            for(int i=0;i<tel.size();i++){
+                strTel += tel.get(i);
+                strTel += ",";
+            }
             String sql = "update User set";
             sql += " user_password=?,";
             sql += " user_name=?,";
@@ -132,8 +144,8 @@ public class User {
             statement.setString(1, password);
             statement.setString(2, userName);
             statement.setString(3, position);
-            statement.setString(4, email);
-            statement.setString(5, tel);
+            statement.setString(4, strMail);
+            statement.setString(5, strTel);
             statement.setString(6, userTypeId);
             statement.setString(7, userId);
             statement.execute();//ประมวลผลข้อมูล
@@ -163,25 +175,3 @@ public class User {
         }
     }
 }
-
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import javax.swing.JFrame;
-//import javax.swing.JLabel;
-//import javax.swing.JOptionPane;
-//    private String userId;
-//    private String userName;
-//    private String position;
-//    private ArrayList<String> email;
-//    private ArrayList<String> tel;
-//    private char userTypeId;
-//    private HashMap<char,String> userType;
-//int idUser,
-//                              String userName,
-//                              String stdId,
-//                              String passWord
-
-//            ResultSet rs = statement.executeQuery();
-//            update.setEmail(rs.getString("user_email"));
-//            update.setTel(rs.getString("user_tel"));
-//            update.setType(rs.getString("user_type"));
