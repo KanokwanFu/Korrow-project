@@ -87,8 +87,10 @@ public class User {
         this.userTypeId = userTypeId;
     }
 
-    public void insertUser() throws ClassNotFoundException {
+    
+        public void insertUser() throws ClassNotFoundException, SQLException {
         System.out.println("insert " + userId + " finish!");
+        Connection con = null;
         try {
             String strMail = "";
             for(int i=0;i<email.size();i++){
@@ -101,7 +103,7 @@ public class User {
                 strTel += ",";
             }
             String sql = "INSERT into User (user_id,user_password,user_name,user_position,user_email,user_tel,user_type) values (?,?,?,?,?,?,?)";
-            Connection con = ConnectionBuilder.ConnectionBuilder();
+            con = ConnectionBuilder.ConnectionBuilder();
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, userId);
             statement.setString(2, password);
@@ -112,14 +114,19 @@ public class User {
             statement.setString(7, userTypeId);
             statement.execute();//ประมวลผลข้อมูล
             statement.close();//หยุดการประมวลผล
-            con.close();
+//            FrameInsert insert = new FrameInsert();
+            
         } catch (SQLException ex) {
+            ex.printStackTrace();
             System.out.println(ex.getMessage());//ใช้แสดงความผิดปกติเป็นString
+        } finally {
+            con.close();
         }
     }
 
-    public void updateUser() {
+    public void updateUser() throws SQLException {
         System.out.println("userId " + userId + "update finish!");
+        Connection con = null;
         try {
             String strMail = "";
             for(int i=0;i<email.size();i++){
@@ -131,6 +138,7 @@ public class User {
                 strTel += tel.get(i);
                 strTel += ",";
             }
+            
             String sql = "update User set";
             sql += " user_password=?,";
             sql += " user_name=?,";
@@ -139,7 +147,7 @@ public class User {
             sql += " user_tel=?,";
             sql += " user_type=?";
             sql += " WHERE user_id=?";
-            Connection con = ConnectionBuilder.ConnectionBuilder();
+            con = ConnectionBuilder.ConnectionBuilder();
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, password);
             statement.setString(2, userName);
@@ -148,30 +156,39 @@ public class User {
             statement.setString(5, strTel);
             statement.setString(6, userTypeId);
             statement.setString(7, userId);
+            
             statement.execute();//ประมวลผลข้อมูล
             statement.close();//หยุดการประมวลผล
-            FrameUpdate update = new FrameUpdate();
-            con.close();
+//            FrameUpdate update = new FrameUpdate();
+            
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());//ใช้แสดงความผิดปกติเป็นString
+            //System.out.println(ex.getMessage());//ใช้แสดงความผิดปกติเป็นString
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            con.close();
         }
     }
 
-    public void deleteUserById(String userId) {
+    public void deleteUserById(String userId) throws SQLException {
+        Connection con = null;
         try {
             String sql = "delete from User where user_id=?";
-            Connection con = ConnectionBuilder.ConnectionBuilder();
+            con = ConnectionBuilder.ConnectionBuilder();
             PreparedStatement statement = con.prepareStatement(sql);//เป็นการเตรียมคำสั่งsqlสำหรับเรียกดูข้อมูลในตาราง
             statement.setString(1, userId);
             statement.execute();//ประมวลผลข้อมูล
             statement.close();//หยุดการประมวลผล
-            con.close();
+           
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+             con.close();
         }
     }
 }
